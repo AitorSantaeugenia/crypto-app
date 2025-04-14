@@ -8,6 +8,7 @@ require('./db');
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express = require('express');
+const session = require('express-session');
 
 // Handles the handlebars
 // https://www.npmjs.com/package/hbs
@@ -15,8 +16,20 @@ const hbs = require('hbs');
 const path = require('path');
 
 const app = express();
-// Adding sessions require
-require('./config/session.config')(app);
+
+// Configura session ANTES de usarlo
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'super hyper secret key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24
+    }
+  })
+);
 
 // ℹ️ This function is getting exported from the config folder. It runs most middlewares
 require('./config')(app);
