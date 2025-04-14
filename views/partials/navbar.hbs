@@ -1,0 +1,228 @@
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="navbar-brand">
+            <a href="/" class="logo">CryptoFolio</a>
+        </div>
+        <button class="mobile-menu-button" aria-label="Toggle menu">
+            <span class="menu-icon"></span>
+        </button>
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/cryptocurrency/-100" class="nav-link">Crypto</a>
+            </div>
+            <div class="navbar-end">
+                {{#if userInSession}}
+                    <div class="user-menu">
+                        <span class="user-name">{{userInSession.username}}</span>
+                        <a href="/logout" class="btn btn-outline">Logout</a>
+                    </div>
+                {{else}}
+                    <a href="/login" class="btn btn-outline">Login</a>
+                    <a href="/signup" class="btn btn-primary">Register</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<style>
+    .navbar {
+        background-color: #1e293b;
+        padding: 1rem 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+
+    .navbar-container {
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo {
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .logo:hover {
+        color: #ffffff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .mobile-menu-button {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .menu-icon {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background-color: #ffffff;
+        position: relative;
+    }
+
+    .menu-icon::before,
+    .menu-icon::after {
+        content: '';
+        position: absolute;
+        width: 24px;
+        height: 2px;
+        background-color: #ffffff;
+        transition: transform 0.3s;
+    }
+
+    .menu-icon::before {
+        top: -6px;
+    }
+
+    .menu-icon::after {
+        bottom: -6px;
+    }
+
+    .navbar-menu {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .navbar-start {
+        display: flex;
+        gap: 1.5rem;
+    }
+
+    .navbar-end {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .nav-link {
+        color: #e2e8f0;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+
+    .nav-link:hover {
+        color: #ffffff;
+    }
+
+    .user-menu {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-name {
+        color: #e2e8f0;
+        font-weight: 500;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .btn-primary {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        background-color: #1d4ed8;
+    }
+
+    .btn-outline {
+        border: 1px solid #e2e8f0;
+        color: #e2e8f0;
+        background: transparent;
+    }
+
+    .btn-outline:hover {
+        background-color: #334155;
+        color: #ffffff;
+    }
+
+    @media (max-width: 768px) {
+        .mobile-menu-button {
+            display: block;
+        }
+
+        .navbar-menu {
+            position: fixed;
+            top: 4rem;
+            left: 0;
+            right: 0;
+            background-color: #1e293b;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 1rem;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .navbar-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .navbar-start {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+
+        .navbar-end {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+
+        .user-menu {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.querySelector('.mobile-menu-button');
+        const navbarMenu = document.querySelector('.navbar-menu');
+
+        menuButton.addEventListener('click', function() {
+            navbarMenu.classList.toggle('active');
+            menuButton.classList.toggle('active');
+        });
+    });
+</script> 

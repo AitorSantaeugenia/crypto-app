@@ -1,0 +1,329 @@
+<div class="crypto-details-container">
+    <nav id="breadcrumbs" class="navbar navbar-expand-lg no-sticky">
+        <div class="container-fluid navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"
+            id="divMarginDifference">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto breadcrumbs">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" style="color: white !important;">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabledA">/</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cryptocurrency">Crypto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabledA">/</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabledA colorGrey">Details</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {{#if crypto}}
+    <div class="crypto-details-content">
+        <div class="crypto-header">
+            <div class="crypto-title">
+                <img src="{{crypto.logo}}" alt="{{crypto.name}} logo" class="crypto-logo">
+                <h1>{{crypto.name}} <span class="crypto-symbol">({{crypto.symbol}})</span></h1>
+            </div>
+            <div class="crypto-price">
+                <h2 class="current-price">${{crypto.price_usd}}</h2>
+                <div class="price-change {{#if (gt crypto.percent_change_24h 0)}}positive{{else}}negative{{/if}}">
+                    {{crypto.percent_change_24h}}%
+                </div>
+            </div>
+        </div>
+
+        <div class="crypto-stats">
+            <div class="stat-card">
+                <h3>Market Cap</h3>
+                <p>${{crypto.market_cap_usd}}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Volume (24h)</h3>
+                <p>${{crypto.volume_24h_usd}}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Circulating Supply</h3>
+                <p>{{crypto.circulating_supply}} {{crypto.symbol}}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Rank</h3>
+                <p>#{{crypto.rank}}</p>
+            </div>
+        </div>
+
+        <div class="crypto-changes">
+            <div class="change-card">
+                <h3>1 Hour Change</h3>
+                <p class="{{#if (gt crypto.percent_change_1h 0)}}positive{{else}}negative{{/if}}">
+                    {{crypto.percent_change_1h}}%
+                </p>
+            </div>
+            <div class="change-card">
+                <h3>24 Hour Change</h3>
+                <p class="{{#if (gt crypto.percent_change_24h 0)}}positive{{else}}negative{{/if}}">
+                    {{crypto.percent_change_24h}}%
+                </p>
+            </div>
+            <div class="change-card">
+                <h3>7 Day Change</h3>
+                <p class="{{#if (gt crypto.percent_change_7d 0)}}positive{{else}}negative{{/if}}">
+                    {{crypto.percent_change_7d}}%
+                </p>
+            </div>
+        </div>
+
+        <div class="crypto-actions">
+            <a href="https://www.binance.com/es/trade/{{crypto.symbol}}_BUSD" class="exchange-link" target="_blank">
+                <img src="/images/binance.png" alt="Binance logo" class="exchange-logo">
+                Trade on Binance
+            </a>
+            <a href="https://www.coinbase.com/es/price/{{crypto.name}}" class="exchange-link" target="_blank">
+                <img src="/images/coinbase.png" alt="Coinbase logo" class="exchange-logo">
+                Trade on Coinbase
+            </a>
+        </div>
+
+        {{#if userInSession}}
+        <div class="crypto-notes">
+            <h3>Your Notes</h3>
+            <form action="/add-comment" method="POST" class="note-form">
+                <textarea name="comments" placeholder="Add a note about {{crypto.name}}..." class="note-textarea"></textarea>
+                <input type="hidden" name="idcrypto" value="{{crypto._id}}">
+                <button type="submit" class="btn btn-primary">Save Note</button>
+            </form>
+        </div>
+        {{/if}}
+    </div>
+    {{else}}
+    <div class="error-message">
+        <p>Cryptocurrency not found</p>
+    </div>
+    {{/if}}
+</div>
+
+<style>
+    .crypto-details-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .crypto-details-content {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .crypto-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .crypto-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .crypto-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .crypto-title h1 {
+        margin: 0;
+        font-size: 2rem;
+        color: #1f2937;
+    }
+
+    .crypto-symbol {
+        color: #6b7280;
+        font-size: 1.5rem;
+    }
+
+    .crypto-price {
+        text-align: right;
+    }
+
+    .current-price {
+        margin: 0;
+        font-size: 2rem;
+        color: #1f2937;
+    }
+
+    .price-change {
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+
+    .price-change.positive {
+        color: #10b981;
+    }
+
+    .price-change.negative {
+        color: #ef4444;
+    }
+
+    .crypto-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-card h3 {
+        margin: 0 0 0.5rem 0;
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .stat-card p {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #1f2937;
+    }
+
+    .crypto-changes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .change-card {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .change-card h3 {
+        margin: 0 0 0.5rem 0;
+        color: #6b7280;
+        font-size: 0.875rem;
+    }
+
+    .change-card p {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+
+    .change-card p.positive {
+        color: #10b981;
+    }
+
+    .change-card p.negative {
+        color: #ef4444;
+    }
+
+    .crypto-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .exchange-link {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: white;
+        border-radius: 8px;
+        color: #1f2937;
+        text-decoration: none;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s;
+    }
+
+    .exchange-link:hover {
+        background: #f3f4f6;
+        transform: translateY(-1px);
+    }
+
+    .exchange-logo {
+        width: 24px;
+        height: 24px;
+    }
+
+    .crypto-notes {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .crypto-notes h3 {
+        margin: 0 0 1rem 0;
+        color: #1f2937;
+    }
+
+    .note-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .note-textarea {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .note-textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+
+    .error-message {
+        text-align: center;
+        padding: 2rem;
+        color: #ef4444;
+    }
+
+    @media (max-width: 768px) {
+        .crypto-details-container {
+            padding: 1rem;
+        }
+
+        .crypto-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .crypto-price {
+            text-align: left;
+        }
+
+        .crypto-actions {
+            flex-direction: column;
+        }
+    }
+</style> 

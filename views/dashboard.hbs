@@ -1,0 +1,441 @@
+<nav id="breadcrumbs" class="navbar navbar-expand-lg no-sticky">
+  <div class="container-fluid navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"
+    id="divMarginDifference">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto breadcrumbs">
+        <li class="nav-item">
+          <a class="nav-link colorGrey" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/dashboard" style="color: white !important;">Dashboard</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-container">
+    <h1>My Favorite Cryptocurrencies</h1>
+    <p>Track your favorite cryptocurrencies and their performance</p>
+
+    {{#if userInSession.favorites.length}}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Symbol</th>
+                        <th>Price</th>
+                        <th>24h Change</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each userInSession.favorites}}
+                        <tr>
+                            <td>{{this.name}}</td>
+                            <td>{{this.symbol}}</td>
+                            <td>{{this.price_usd}}</td>
+                            <td>
+                                <span class="{{#if (isPositive this.percent_change_24h)}}text-success{{else}}text-danger{{/if}}">
+                                    {{this.percent_change_24h}}%
+                                </span>
+                            </td>
+                            <td class="actions">
+                                <button class="btn btn-danger btn-sm remove-favorite" data-id="{{this.apiID}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                    </svg>
+                                </button>
+                                <button class="btn btn-primary btn-sm add-comment" 
+                                    data-id="{{this.apiID}}" 
+                                    data-name="{{this.name}}" 
+                                    data-symbol="{{this.symbol}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
+                                        <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                                        <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9.06 9.06 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.437 10.437 0 0 1-.524 2.318l-.003.011a10.722 10.722 0 0 1-.244.637c-.079.186.074.394.273.362a21.673 21.673 0 0 0 .693-.125zm.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6c0 3.193-3.004 6-7 6a8.06 8.06 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a10.97 10.97 0 0 0 .398-2"/>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    {{else}}
+        <div class="no-favorites">
+            <p>No favorites yet</p>
+            <p>Add cryptocurrencies to your favorites to track them here</p>
+            <a href="/cryptocurrency/-100" class="btn btn-primary">Browse Cryptocurrencies</a>
+        </div>
+    {{/if}}
+    {{!-- Sección de TODOs --}}
+    <div class="todos-container">
+        <h2>Crypto <span style="text-decoration: underline; text-decoration-color: #dc2626;">TODOs</span></h2>
+        <div class="todos-list">
+            {{#if comments.length}}
+                {{#each comments}}
+                    <div class="todo-item">
+                        <div class="crypto-icon">{{this.cryptoSymbol}}</div>
+                        <div class="todo-content">
+                            <p>{{this.text}}</p>
+                            <small>{{formatDate this.createdAt}}</small>
+                        </div>
+                        <button class="btn btn-danger btn-sm delete-comment" data-id="{{this._id}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </button>
+                    </div>
+                {{/each}}
+            {{else}}
+                <p>No TODOs yet</p>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+
+
+{{!-- Modal para añadir comentario --}}
+<div class="modal fade" id="commentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add TODO for <span id="cryptoNameSpan"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="commentForm">
+                    <input type="hidden" id="cryptoId" name="cryptoId">
+                    <input type="hidden" id="cryptoSymbol" name="cryptoSymbol">
+                    <input type="hidden" id="cryptoName" name="cryptoName">
+                    <div class="mb-3">
+                        <label for="commentText" class="form-label">Your TODO</label>
+                        <textarea class="form-control" id="commentText" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveComment">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.table {
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.table td, .table th {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.text-success {
+    color: #10b981 !important;
+    font-weight: 500;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+    font-weight: 500;
+}
+
+.btn-danger {
+    background-color: #fee2e2;
+    border: none;
+    color: #dc2626;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+    color: white;
+}
+
+.no-favorites {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.no-favorites p {
+    margin-bottom: 1rem;
+    color: #6c757d;
+}
+
+.remove-favorite {
+    padding: 0.25rem 0.5rem;
+}
+
+.remove-favorite:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.todos-container {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 1rem;
+}
+
+.crypto-icon {
+    background-color: #2563eb;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.todo-content {
+    flex: 1;
+}
+
+.todo-content p {
+    margin: 0;
+}
+
+.todo-content small {
+    color: #6b7280;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const removeButtons = document.querySelectorAll('.remove-favorite');
+    
+    removeButtons.forEach(button => {
+        button.addEventListener('click', async function() {
+            const cryptoId = this.dataset.id;
+            const row = this.closest('tr');
+            
+            if (confirm('Are you sure you want to remove this cryptocurrency from your favorites?')) {
+                try {
+                    console.log('Sending delete request for crypto:', cryptoId);
+                    const response = await fetch(`/dashboard/remove-favorite/${cryptoId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Animación de desvanecimiento y eliminación de la fila
+                        row.style.transition = 'opacity 0.3s ease';
+                        row.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            row.remove();
+                            
+                            // Verificar si quedan filas en la tabla
+                            const remainingRows = document.querySelectorAll('tbody tr').length;
+                            if (remainingRows === 0) {
+                                // Si no quedan filas, mostrar el mensaje de "No favorites"
+                                location.reload();
+                            }
+                        }, 300);
+
+                        showMessage('Cryptocurrency removed from favorites');
+                    } else {
+                        showMessage(result.message || 'Error removing favorite', true);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('Error removing favorite', true);
+                }
+            }
+        });
+    });
+
+    const modal = new bootstrap.Modal(document.getElementById('commentModal'));
+    
+    // Manejar clic en botón de añadir comentario
+    document.querySelectorAll('.add-comment').forEach(button => {
+        button.addEventListener('click', function() {
+            const cryptoId = this.dataset.id;
+            const cryptoName = this.dataset.name;
+            const cryptoSymbol = this.dataset.symbol;
+            
+            // Actualizar los campos ocultos
+            document.getElementById('cryptoId').value = cryptoId;
+            document.getElementById('cryptoSymbol').value = cryptoSymbol;
+            document.getElementById('cryptoName').value = cryptoName;
+            
+            // Actualizar el texto del span
+            document.getElementById('cryptoNameSpan').textContent = cryptoName;
+            
+            modal.show();
+        });
+    });
+    
+    // Guardar comentario
+    document.getElementById('saveComment').addEventListener('click', async function() {
+        try {
+            const cryptoId = document.getElementById('cryptoId').value;
+            const cryptoSymbol = document.getElementById('cryptoSymbol').value;
+            const cryptoName = document.getElementById('cryptoName').value;
+            const text = document.getElementById('commentText').value;
+            
+            console.log('Form values:', {
+                cryptoId,
+                cryptoSymbol,
+                cryptoName,
+                text
+            });
+
+            if (!text.trim()) {
+                showMessage('Please enter a comment', true);
+                return;
+            }
+
+            if (!cryptoId || !cryptoSymbol || !cryptoName) {
+                showMessage('Missing cryptocurrency information', true);
+                return;
+            }
+
+            const response = await fetch('/dashboard/add-comment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    cryptoId,
+                    cryptoSymbol,
+                    cryptoName,
+                    text
+                })
+            });
+
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Error adding comment');
+            }
+
+            // Si todo sale bien, cerrar el modal y recargar
+            modal.hide();
+            location.reload();
+            
+        } catch (error) {
+            console.error('Error in saveComment:', error);
+            showMessage(error.message, true);
+        }
+    });
+    
+    // Eliminar comentario
+    document.querySelectorAll('.delete-comment').forEach(button => {
+        button.addEventListener('click', async function() {
+            const commentId = this.dataset.id;
+            
+            if (confirm('Are you sure you want to delete this TODO?')) {
+                try {
+                    const response = await fetch(`/dashboard/delete-comment/${commentId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
+    });
+
+    function showMessage(message, isError = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.position = 'fixed';
+        messageDiv.style.top = '20px';
+        messageDiv.style.right = '20px';
+        messageDiv.style.padding = '10px 20px';
+        messageDiv.style.borderRadius = '5px';
+        messageDiv.style.backgroundColor = isError ? '#dc2626' : '#059669';
+        messageDiv.style.color = 'white';
+        messageDiv.style.zIndex = '1000';
+        messageDiv.style.display = 'flex';
+        messageDiv.style.alignItems = 'center';
+        messageDiv.style.gap = '10px';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = message;
+        
+        const closeButton = document.createElement('button');
+        closeButton.innerHTML = '×';
+        closeButton.style.background = 'none';
+        closeButton.style.border = 'none';
+        closeButton.style.color = 'white';
+        closeButton.style.fontSize = '20px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.padding = '0 0 0 10px';
+        closeButton.style.marginLeft = '10px';
+        closeButton.style.lineHeight = '1';
+        
+        closeButton.onclick = () => messageDiv.remove();
+        
+        messageDiv.appendChild(textSpan);
+        messageDiv.appendChild(closeButton);
+        
+        document.body.appendChild(messageDiv);
+        
+        const timer = setTimeout(() => {
+            if (document.body.contains(messageDiv)) {
+                messageDiv.remove();
+            }
+        }, 3000);
+        
+        closeButton.addEventListener('click', () => clearTimeout(timer));
+    }
+});
+</script> 

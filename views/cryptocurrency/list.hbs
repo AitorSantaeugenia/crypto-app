@@ -1,0 +1,440 @@
+<div class='container'>
+  <nav id="breadcrumbs" class="navbar navbar-expand-lg no-sticky">
+    <div class="container-fluid navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2"
+      id="divMarginDifference">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto breadcrumbs">
+          <li class="nav-item">
+            <a class="nav-link colorGrey" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" style="color: white !important;" href="/cryptocurrency/-100">Crypto</a>
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+        <ul class="navbar-nav ml-auto">
+          {{#if userInSession}}
+          <li class="nav-item ">
+            <a class="nav-link disabledA">Welcome <strong>{{userInSession.username}}</strong></a>
+          </li>
+          {{/if}}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  {{#if message}}
+  <!-- MODAL -->
+  <div class="modal show" id="modalExampleDashboard" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" id="modalContentAdd">
+
+
+        <div class="modal-header modalHeaderBlack">
+          <h5 class="modal-title" id="exampleModalLabel"><img src="/images/favicon.png"
+              style="width:20px; height:20px"></img></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" style="color:#f00">&times;</span>
+          </button>
+        </div>
+        <div class="modal-header">
+          <h5 class="modal-title" style="color: rgb(182, 3, 3) !important;"><strong>Added</strong></h5>
+
+        </div>
+
+
+        <div class="modal-body">
+          {{message.message}}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL -->
+  {{/if}}
+  <div class="crypto-container">
+    <div class="crypto-header">
+      <h1 class="crypto-title">
+        <img src="/images/cryptologo.png" alt="Crypto Logo" class="crypto-logo">
+        Cryptocurrency List
+      </h1>
+      <div class="crypto-controls">
+        <div class="search-box">
+          <input type="text" id="myInput" onkeyup="searchCrypto()" placeholder="Search cryptocurrency...">
+        </div>
+        <div class="pagination-controls">
+          <a href="/cryptocurrency/{{prevStart}}" class="btn-outline {{#if (eq start 0)}}disabled{{/if}}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Anterior
+          </a>
+          <a href="/cryptocurrency/{{nextStart}}" class="btn-outline">
+            Siguiente
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="crypto-table-container">
+      <table class="crypto-table" id="tableListCurrency">
+        <thead>
+          <tr>
+            <th>Currency</th>
+            <th>Symbol</th>
+            <th>Price $</th>
+            <th>% 24h</th>
+            <th>% 1h</th>
+            <th>% 7d</th>
+            <th>Circ. Supply</th>
+            <th>Market Cap</th>
+            <th>Watchlist</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each coins.data}}
+          <tr>
+            <td class="currency-cell">
+              <a href="/cryptocurrency/details/{{id}}" class="currency-link">
+                {{#if logo}}
+                  <img src="{{logo}}" alt="{{name}}" class="currency-logo">
+                {{/if}}
+                <span class="currency-name">{{name}}</span>
+              </a>
+            </td>
+            <td>{{symbol}}</td>
+            <td class="price">{{price_usd}}</td>
+            <td class="change" data-change="{{percent_change_24h}}">{{percent_change_24h}}</td>
+            <td class="change" data-change="{{percent_change_1h}}">{{percent_change_1h}}</td>
+            <td class="change" data-change="{{percent_change_7d}}">{{percent_change_7d}}</td>
+            <td>{{csupply}}</td>
+            <td class="market-cap">{{market_cap_usd}}</td>
+            <td>
+              {{#if ../userInSession}}
+              <form class="watchlist-form">
+                <input type="hidden" name="apiID" value="{{id}}">
+                <input type="hidden" name="name" value="{{name}}">
+                <input type="hidden" name="symbol" value="{{symbol}}">
+                <input type="hidden" name="price_usd" value="{{price_usd}}">
+                <input type="hidden" name="percent_change_24h" value="{{percent_change_24h}}">
+                <input type="hidden" name="percent_change_1h" value="{{percent_change_1h}}">
+                <input type="hidden" name="percent_change_7d" value="{{percent_change_7d}}">
+                <input type="hidden" name="csupply" value="{{csupply}}">
+                <input type="hidden" name="market_cap_usd" value="{{market_cap_usd}}">
+                <button type="submit" class="watchlist-btn" title="Add to favorites">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.565.565 0 0 0-.163-.505L1.71 6.745l4.052-.576a.525.525 0 0 0 .393-.288L8 2.223l1.847 3.658a.525.525 0 0 0 .393.288l4.052.575-2.906 2.77a.565.565 0 0 0-.163.506l.694 3.957-3.686-1.894a.503.503 0 0 0-.461 0z"/>
+                  </svg>
+                </button>
+              </form>
+              {{/if}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<style>
+  .crypto-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .crypto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .crypto-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 2rem;
+    color: #1f2937;
+  }
+
+  .crypto-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .crypto-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .search-box input {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    width: 300px;
+    font-size: 1rem;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  .pagination-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .pagination-controls .btn-outline {
+    background-color: #2563eb;
+    color: white;
+    border: 1px solid #2563eb;
+    padding: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .pagination-controls .btn-outline:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+    transform: translateY(-1px);
+  }
+
+  .pagination-controls .btn-outline svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .crypto-table-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .crypto-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .crypto-table th {
+    background-color: #f8fafc;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #4b5563;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .crypto-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+  }
+
+  .crypto-table tr:hover {
+    background-color: #f8fafc;
+  }
+
+  .crypto-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .crypto-link:hover {
+    text-decoration: underline;
+  }
+
+  .price, .market-cap {
+    color: #2563eb;
+    font-weight: 500;
+  }
+
+  .change[data-change^="-"] {
+    color: #dc2626;
+  }
+
+  .change:not([data-change^="-"]) {
+    color: #059669;
+  }
+
+  .watchlist-form {
+    display: contents;
+  }
+
+  .watchlist-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #d1d5db;
+    transition: all 0.2s ease;
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .watchlist-btn:hover {
+    color: #fbbf24;
+    background-color: rgba(251, 191, 36, 0.1);
+    transform: scale(1.1);
+  }
+
+  .watchlist-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  @media (max-width: 768px) {
+    .crypto-container {
+      padding: 1rem;
+    }
+
+    .crypto-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .search-box input {
+      width: 100%;
+    }
+
+    .crypto-table th,
+    .crypto-table td {
+      padding: 0.75rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .currency-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+  }
+
+  .currency-link:hover {
+    color: #2563eb;
+  }
+
+  .currency-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+
+  .currency-name {
+    font-weight: 500;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.watchlist-form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => data[key] = value);
+
+            try {
+                const response = await fetch('/cryptocurrency/add-favorite', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Éxito
+                    showMessage('Cryptocurrency added to favorites!');
+                    const button = this.querySelector('.watchlist-btn');
+                    button.style.color = '#fbbf24';
+                } else {
+                    // Error o duplicado
+                    showMessage(result.message, true);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('Error adding to favorites', true);
+            }
+        });
+    });
+
+    function showMessage(message, isError = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.style.position = 'fixed';
+        messageDiv.style.top = '20px';
+        messageDiv.style.right = '20px';
+        messageDiv.style.padding = '10px 20px';
+        messageDiv.style.borderRadius = '5px';
+        messageDiv.style.backgroundColor = isError ? '#dc2626' : '#059669';
+        messageDiv.style.color = 'white';
+        messageDiv.style.zIndex = '1000';
+        messageDiv.style.display = 'flex';
+        messageDiv.style.alignItems = 'center';
+        messageDiv.style.gap = '10px';
+        
+        const textSpan = document.createElement('span');
+        textSpan.textContent = message;
+        
+        const closeButton = document.createElement('button');
+        closeButton.innerHTML = '×';
+        closeButton.style.background = 'none';
+        closeButton.style.border = 'none';
+        closeButton.style.color = 'white';
+        closeButton.style.fontSize = '20px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.padding = '0 0 0 10px';
+        closeButton.style.marginLeft = '10px';
+        closeButton.style.lineHeight = '1';
+        
+        closeButton.onclick = () => messageDiv.remove();
+        
+        messageDiv.appendChild(textSpan);
+        messageDiv.appendChild(closeButton);
+        
+        document.body.appendChild(messageDiv);
+        
+        const timer = setTimeout(() => {
+            if (document.body.contains(messageDiv)) {
+                messageDiv.remove();
+            }
+        }, 3000);
+        
+        closeButton.addEventListener('click', () => clearTimeout(timer));
+    }
+});
+</script>

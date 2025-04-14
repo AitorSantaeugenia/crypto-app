@@ -1,0 +1,404 @@
+<div class="container">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <ul class="navbar-nav mr-auto breadcrumbs">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/cryptocurrency/-100">Cryptocurrencies</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" style="color: white !important;">{{crypto.name}}</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="crypto-details-container">
+    <div class="crypto-header">
+      <div class="crypto-title">
+        {{#if crypto.logo}}
+          <img src="{{crypto.logo}}" alt="{{crypto.name}}" class="crypto-logo">
+        {{/if}}
+        <h1>{{crypto.name}} <span class="symbol">({{crypto.symbol}})</span></h1>
+        <span class="rank">Rank #{{crypto.rank}}</span>
+      </div>
+      <div class="price-container">
+        <span class="price">{{formatCurrency crypto.price_usd}}</span>
+        <span class="price-change {{#if (isPositive crypto.percent_change_24h)}}positive{{else}}negative{{/if}}">
+          {{crypto.percent_change_24h}}% (24h)
+        </span>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Market Cap</h3>
+        <p>{{formatCurrency crypto.market_cap_usd}}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Volume (24h)</h3>
+        <p>{{formatVolume crypto.volume24}}</p>
+        <span class="sub-text">Volume 24h: {{formatVolume crypto.volume24a}}</span>
+      </div>
+      <div class="stat-card">
+        <h3>Circulating Supply</h3>
+        <p>{{formatNumber crypto.csupply}} {{crypto.symbol}}</p>
+        <div class="supply-info">
+          <span class="sub-text">Max Supply: {{#if crypto.msupply}}{{formatNumber crypto.msupply}}{{else}}∞{{/if}}</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <h3>Total Supply</h3>
+        <p>{{formatNumber crypto.tsupply}} {{crypto.symbol}}</p>
+      </div>
+    </div>
+
+    <div class="performance-grid">
+      <div class="performance-card">
+        <h3>Price Change</h3>
+        <div class="performance-stats">
+          <div class="stat-row">
+            <span>1h</span>
+            <span class="{{#if (isPositive crypto.percent_change_1h)}}positive{{else}}negative{{/if}}">
+              {{crypto.percent_change_1h}}%
+            </span>
+          </div>
+          <div class="stat-row">
+            <span>24h</span>
+            <span class="{{#if (isPositive crypto.percent_change_24h)}}positive{{else}}negative{{/if}}">
+              {{crypto.percent_change_24h}}%
+            </span>
+          </div>
+          <div class="stat-row">
+            <span>7d</span>
+            <span class="{{#if (isPositive crypto.percent_change_7d)}}positive{{else}}negative{{/if}}">
+              {{crypto.percent_change_7d}}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-card">
+            <h3>Price Change Overview</h3>
+            <canvas id="priceChangeChart"></canvas>
+        </div>
+    </div>
+
+    <div class="crypto-description">
+      <h3>About {{crypto.name}}</h3>
+      {{#if crypto.description}}
+        <p>{{crypto.description}}</p>
+      {{else}}
+        <p class="no-description">No description available for {{crypto.name}}. This cryptocurrency is listed on CoinLore and actively traded.</p>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<script>
+    // Convertir los datos de la crypto a un objeto JavaScript
+    const cryptoData = {{{json crypto}}};
+    
+    // Mostrar los datos en la consola
+    console.log('Cryptocurrency details:', cryptoData);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Datos para el gráfico
+        const ctx = document.getElementById('priceChangeChart').getContext('2d');
+        
+        // Crear el gráfico
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['1 Hour', '24 Hours', '7 Days'],
+                datasets: [{
+                    label: 'Price Change (%)',
+                    data: [
+                        parseFloat(cryptoData.percent_change_1h),
+                        parseFloat(cryptoData.percent_change_24h),
+                        parseFloat(cryptoData.percent_change_7d)
+                    ],
+                    backgroundColor: [
+                        parseFloat(cryptoData.percent_change_1h) >= 0 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)',
+                        parseFloat(cryptoData.percent_change_24h) >= 0 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)',
+                        parseFloat(cryptoData.percent_change_7d) >= 0 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)'
+                    ],
+                    borderColor: [
+                        parseFloat(cryptoData.percent_change_1h) >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)',
+                        parseFloat(cryptoData.percent_change_24h) >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)',
+                        parseFloat(cryptoData.percent_change_7d) >= 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.raw}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            },
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+  .crypto-details-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+
+  .crypto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .crypto-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .crypto-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+  }
+
+  .crypto-title h1 {
+    font-size: 2rem;
+    margin: 0;
+    color: #1e293b;
+  }
+
+  .symbol {
+    color: #6b7280;
+    font-size: 1.5rem;
+  }
+
+  .price-container {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1e293b;
+  }
+
+  .price-change {
+    font-size: 1.25rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .stat-card h3 {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-card p {
+    margin: 0.5rem 0 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .performance-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .performance-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .performance-card h3 {
+    margin: 0 0 1rem;
+    color: #1e293b;
+    font-size: 1.25rem;
+  }
+
+  .performance-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .stat-row:last-child {
+    border-bottom: none;
+  }
+
+  .positive {
+    color: #10b981;
+    background-color: #ecfdf5;
+  }
+
+  .negative {
+    color: #ef4444;
+    background-color: #fef2f2;
+  }
+
+  .crypto-description {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .crypto-description h3 {
+    color: #1f2937;
+    margin: 0 0 1rem 0;
+  }
+
+  .crypto-description p {
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .crypto-header {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.5rem;
+    }
+
+    .price {
+      font-size: 2rem;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rank {
+    background-color: #f3f4f6;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-left: 1rem;
+  }
+
+  .sub-text {
+    font-size: 0.875rem;
+    color: #6b7280;
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .supply-info {
+    margin-top: 0.25rem;
+  }
+
+  .stat-card {
+    position: relative;
+  }
+
+  .chart-container {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .chart-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .chart-card h3 {
+    margin-bottom: 1.5rem;
+    color: #1e293b;
+    font-size: 1.25rem;
+  }
+
+  .no-description {
+    color: #6b7280;
+    font-style: italic;
+    padding: 1rem 0;
+  }
+</style>
