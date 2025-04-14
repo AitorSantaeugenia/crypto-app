@@ -85,45 +85,35 @@ router.delete('/remove-favorite/:apiID', isLoggedIn, async (req, res) => {
 // Añadir comentario
 router.post('/add-comment', isLoggedIn, async (req, res) => {
     try {
-        // Log completo de los datos recibidos
-        console.log('Request body:', req.body);
-        console.log('User session:', req.session.currentUser);
-
+        console.log('Received comment data:', req.body);
         const { cryptoId, cryptoSymbol, cryptoName, text } = req.body;
         const userId = req.session.currentUser._id;
 
-        // Verificar que todos los campos necesarios estén presentes
         if (!cryptoId || !cryptoSymbol || !cryptoName || !text) {
-            console.log('Missing fields:', { cryptoId, cryptoSymbol, cryptoName, text });
             return res.status(400).json({
                 success: false,
-                message: 'All fields are required'
+                message: 'Missing required fields'
             });
         }
 
-        // Crear el comentario
-        const newComment = {
+        const comment = await Comment.create({
             userId,
             cryptoId,
             cryptoName,
             cryptoSymbol,
             text
-        };
+        });
 
-        console.log('Creating comment with data:', newComment);
-
-        const comment = await Comment.create(newComment);
-
-        console.log('Comment created successfully:', comment);
+        console.log('Comment created:', comment);
         
-        res.json({
+        return res.json({
             success: true,
             comment,
             message: 'Comment added successfully'
         });
     } catch (error) {
-        console.error('Error in add-comment route:', error);
-        res.status(500).json({
+        console.error('Error in add-comment:', error);
+        return res.status(500).json({
             success: false,
             message: error.message
         });

@@ -339,15 +339,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            if (!cryptoId || !cryptoSymbol || !cryptoName) {
-                showMessage('Missing cryptocurrency information', true);
-                return;
-            }
-
             const response = await fetch('/dashboard/add-comment', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
                     cryptoId,
@@ -357,19 +353,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
             });
 
-            const data = await response.json();
-            
             if (!response.ok) {
-                throw new Error(data.message || 'Error adding comment');
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error adding comment');
             }
 
-            // Si todo sale bien, cerrar el modal y recargar
-            modal.hide();
-            location.reload();
+            const data = await response.json();
             
+            if (data.success) {
+                showMessage('Comment added successfully');
+                modal.hide();
+                location.reload();
+            } else {
+                throw new Error(data.message || 'Error adding comment');
+            }
         } catch (error) {
             console.error('Error in saveComment:', error);
-            showMessage(error.message, true);
+            showMessage(error.message || 'Error adding comment', true);
         }
     });
     
