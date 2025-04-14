@@ -2,6 +2,19 @@
 
 A cryptocurrency portfolio tracker and management application built with Node.js, Express, and Handlebars (HBS) as the template engine. This full-stack application allows users to track their favorite cryptocurrencies and manage their investment strategy through a clean and intuitive interface.
 
+🌐 Live Demo: [CryptoFolio App](https://crypto-app-nine-kappa.vercel.app/)
+
+## Screenshots 📸
+
+### Home (/)
+![GitHub Authentication](./public/images/github_1.png)
+
+### Dashboard (/dashboard)
+![GitHub Dashboard](./public/images/github_2.gif)
+
+### Cryptocurrency List (/cryptocurrency) and details (/details)
+![GitHub Crypto List](./public/images/github_3.gif)
+
 ## Features ✨
 
 - **Real-time Cryptocurrency Tracking**: Monitor prices, market caps, and trends
@@ -18,9 +31,11 @@ A cryptocurrency portfolio tracker and management application built with Node.js
 - **API Integration**: CoinLore API
 - **Frontend**: Handlebars (HBS) + Bootstrap
 - **Other Tools**: Chart.js for graphics
+- **Hosting**: Vercel for deployment and hosting
 
-## Installation 🚀
+## Installation 🛠
 
+### Local Development
 1. Clone the repository:
 ```bash
 git clone [repository-url]
@@ -41,6 +56,53 @@ SESSION_SECRET=your_session_secret
 4. Start the application:
 ```bash
 npm run dev
+```
+
+### Deployment on Vercel 🚀
+
+1. Install Vercel CLI:
+```bash
+npm i -g vercel
+```
+
+2. Configure environment variables in Vercel:
+   - Go to your Vercel Dashboard
+   - Navigate to Project Settings > Environment Variables
+   - Add the following variables:
+```env
+DB_REMOTE=your_mongodb_uri
+SESSION_SECRET=your_session_secret
+NODE_ENV=production
+ORIGIN=your_vercel_app_url
+```
+
+3. Add `vercel.json` configuration:
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "app.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/dashboard/add-comment",
+      "methods": ["POST"],
+      "dest": "app.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "app.js"
+    }
+  ]
+}
+```
+
+4. Deploy to Vercel:
+```bash
+vercel --prod
 ```
 
 ## Usage 💡
@@ -86,7 +148,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - LinkedIn: [Aitor Santaeugenia](https://www.linkedin.com/in/aitorjsantaeugenia/)
 - GitHub: [AitorSantaeugenia](https://github.com/AitorSantaeugenia)
-
-## Screenshots 📸
-
-[Add screenshots of your application here]
